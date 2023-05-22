@@ -1,4 +1,6 @@
-package entities;
+package model.entities;
+
+import model.exceptions.DomainExceptions;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -16,6 +18,9 @@ public class Reserva {
     }
 
     public Reserva(Integer numeroQuarto, Date dataEntrada, Date dataSaida) {
+        if (!dataSaida.after(dataEntrada)) {
+            throw new DomainExceptions("Erro na reserva: Data de entrada não pode ser depois da data de saída!");
+        }
         this.numeroQuarto = numeroQuarto;
         this.dataEntrada = dataEntrada;
         this.dataSaida = dataSaida;
@@ -42,17 +47,16 @@ public class Reserva {
         return TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS);
     }
 
-    public String alterarData (Date dataEntrada, Date dataSaida) {
+    public void alterarData (Date dataEntrada, Date dataSaida) {
         Date agora = new Date();
         if (dataEntrada.before(agora) || dataSaida.before(agora)) {
-            return "A data de reserva tem que ser futura!";
+            throw new DomainExceptions("A data de reserva tem que ser futura!");
         }
         if (!dataSaida.after(dataEntrada)) {
-            return "Erro na reserva: Data de entrada não pode ser depois da data de saída!";
+            throw new DomainExceptions("Erro na reserva: Data de entrada não pode ser depois da data de saída!");
         }
         this.dataEntrada = dataEntrada;
         this.dataSaida = dataSaida;
-        return null;
     }
 
     @Override
